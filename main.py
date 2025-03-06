@@ -23,6 +23,7 @@ import json
 import webbrowser
 from core import _init_
 import time
+import datetime
 
 #Síntese de voz
 engine = pyttsx3.init()
@@ -119,6 +120,48 @@ def buscar_web():
         url = 'https://www.google.com/search?q=' + busca
         webbrowser.open(url)
         speak('Aqui estão os resultados da busca {busca}')
+
+import datetime
+import json
+import time
+
+def reminder():
+    speak('Diga o que quer que eu te lembre?')
+
+    # Aguarda a resposta do usuário
+    data = stream.read(2048, exception_on_overflow=False)
+    if rec.AcceptWaveform(data):
+        result = rec.Result()
+        result = json.loads(result)
+        if result is not None:
+            lembrete = result['text']
+        else:
+            speak('Não entendi o lembrete. Por favor, tente novamente.')
+            return
+
+    speak('Que dia e que horas quer que te lembre?')
+
+    # Aguarda a resposta do usuário
+    data = stream.read(2048, exception_on_overflow=False)
+    if rec.AcceptWaveform(data):
+        result = rec.Result()
+        result = json.loads(result)
+        if result is not None:
+            data_str = result['text']
+        else:
+            speak('Não entendi a data e hora. Por favor, tente novamente.')
+            return
+
+    # Converter a string de data/hora para um objeto datetime
+    try:
+        reminder_time = datetime.datetime.strptime(data_str, '%d/%m/%Y %H:%M')
+    except ValueError:
+        speak('Formato de data e hora inválido. Por favor, use o formato DD/MM/AAAA HH:MM.')
+        return
+
+    # Agora você pode usar `lembrete` e `reminder_time` para configurar o lembrete
+    speak(f'Lembrete configurado: {lembrete} para {reminder_time.strftime("%d/%m/%Y %H:%M")}')
+
         
 #Loop do reconhecimento de fala
 
@@ -139,8 +182,8 @@ while True:
             engine.runAndWait()
 
         if text == 'me diga as horas' or text == 'que horas são':
-                speak(hora_atual)
-                print(f"A hora atual é: ", hora_atual)
+            speak(hora_atual)
+            print(f"A hora atual é: ", hora_atual)
 
         if text == 'lista de tarefas' or text == 'Abrir a lista':
              print('Abrindo lista de tarefas')
@@ -151,5 +194,10 @@ while True:
              print('Buscando na web')
              speak('Buscando na web')
              buscar_web()
+
+        if text == 'lembrete' or text == 'lembretes':
+            print('Configurando lembrete')
+            speak('Configurando lembrete')
+            reminder()
              
              
