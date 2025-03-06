@@ -121,10 +121,6 @@ def buscar_web():
         webbrowser.open(url)
         speak('Aqui estão os resultados da busca {busca}')
 
-import datetime
-import json
-import time
-
 def reminder():
     speak('Diga o que quer que eu te lembre?')
 
