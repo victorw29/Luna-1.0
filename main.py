@@ -61,7 +61,15 @@ def add_task():
         print('Que tarefa você quer adicionar?? \n')
         speak('Que tarefa você quer adicionar??')
 
-        item = text
+        # Aguarda a resposta do usuário
+        while True:
+            data = stream.read(2048, exception_on_overflow=False)
+            if rec.AcceptWaveform(data):
+                result = rec.Result()
+                result = json.loads(result)
+                if result is not None:
+                    item = result['text']
+                    break
 
         if item:  # Verifica se o item não está vazio
             task.append(item)  # Adiciona a tarefa à lista
@@ -74,6 +82,17 @@ def add_task():
 
         print('Deseja continuar adicionando itens a lista? \n')
         continuar = speak('Deseja continuar adicionando itens a lista?') #Pergunta se o usuário quer continuar adicionando itens a lista
+
+        # Aguarda a resposta do usuário
+        while True:
+            data = stream.read(2048, exception_on_overflow=False)
+            if rec.AcceptWaveform(data):
+                result = rec.Result()
+                result = json.loads(result)
+                if result is not None:
+                    continuar = result['text']
+                    break
+
         if continuar == 'sim':
              continue
         time.sleep(5)
@@ -82,6 +101,24 @@ def add_task():
         print(f'Lista de tarefas Atualizada {task} \n')
         speak(f'Lista de tarefas Atualizada: {task}') #Exibe a lista de tarefas atualizada
         break
+     
+#Função para buscar na web
+def buscar_web():
+    while True:
+        speak('O que você gostaria de buscar na web?')
+
+# Aguarda a resposta do usuário
+        data = stream.read(2048, exception_on_overflow=False)
+        if rec.AcceptWaveform(data):
+            result = rec.Result()
+            result = json.loads(result)
+        if result is not None:
+            busca = result['text']
+            break
+        time.sleep(5)
+        url = 'https://www.google.com/search?q=' + busca
+        webbrowser.open(url)
+        speak('Aqui estão os resultados da busca {busca}')
         
 #Loop do reconhecimento de fala
 
@@ -109,5 +146,10 @@ while True:
              print('Abrindo lista de tarefas')
              speak('Abrindo lista de tarefas')
              add_task()
+
+        if text == 'buscar na web' or text == 'busca na web':
+             print('Buscando na web')
+             speak('Buscando na web')
+             buscar_web()
              
              
