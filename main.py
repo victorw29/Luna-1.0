@@ -43,7 +43,7 @@ hora_atual = info.get_time()
 
 # reconhecimento de fala 
 
-model_path = 'C:/Users/Martins/Desktop/victor/Luna/model'
+model_path = 'C:/Users/Martins/Desktop/victor/projetos/Luna-1.0/models'
 
 model = Model(model_path)
 rec = KaldiRecognizer(model, 16000)
@@ -195,5 +195,6 @@ while True:
             print('Configurando lembrete')
             speak('Configurando lembrete')
             reminder()
-             
+
+
              
