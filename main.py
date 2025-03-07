@@ -24,6 +24,7 @@ import webbrowser
 from core import _init_
 import time
 import datetime
+import urllib.parse  # Adicione esta importação no início do arquivo
 
 #Síntese de voz
 engine = pyttsx3.init()
@@ -103,23 +104,34 @@ def add_task():
         speak(f'Lista de tarefas Atualizada: {task}') #Exibe a lista de tarefas atualizada
         break
      
-#Função para buscar na web
+# Função para buscar na web
 def buscar_web():
     while True:
         speak('O que você gostaria de buscar na web?')
 
-# Aguarda a resposta do usuário
-        data = stream.read(2048, exception_on_overflow=False)
-        if rec.AcceptWaveform(data):
-            result = rec.Result()
-            result = json.loads(result)
-        if result is not None:
+        # Aguarda a resposta do usuário
+        result = None  # Inicializa a variável result
+        while True:
+            data = stream.read(2048, exception_on_overflow=False)
+            if rec.AcceptWaveform(data):
+                result = rec.Result()
+                result = json.loads(result)
+                break  # Sai do loop quando obtém uma resposta válida
+
+        if result is not None and 'text' in result:
             busca = result['text']
-            break
-        time.sleep(5)
-        url = 'https://www.google.com/search?q=' + busca
-        webbrowser.open(url)
-        speak('Aqui estão os resultados da busca {busca}')
+            print(f"Você quer buscar: {busca}")
+
+            # Codifica o texto da busca para uso em URLs
+            busca_codificada = urllib.parse.quote(busca)
+            url = f'https://www.google.com/search?q={busca_codificada}'
+            
+            # Abre a URL no navegador
+            webbrowser.open(url)
+            speak(f'Aqui estão os resultados da busca para {busca}')
+            break  # Sai do loop após realizar a busca
+        else:
+            speak('Não entendi o que você quer buscar. Por favor, tente novamente.')
 
 def reminder():
     speak('Diga o que quer que eu te lembre?')
